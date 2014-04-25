@@ -1,0 +1,264 @@
+{% extends "gameTimeApp/base-generic.html" %}
+{% load staticfiles %}
+{% block navbar %}
+<nav>
+  <ul class="sf-menu header_menu">
+    <li class="current" id="first-li"><a href="{% url 'home' %}">Home<strong></strong></a></li>
+    <li><a href="#">Find A Game<strong></strong></a>
+      <ul class='submenu'>
+        <!-- <li><a href="/gameTime/find-game/nfl/{%now 'Ymd'%}">NFL</a></li> -->
+        <li><a href="/gameTime/find-game/nhl/{%now 'Ymd'%}">NHL</a></li>
+        <li><a href="/gameTime/find-game/nba/{%now 'Ymd'%}">NBA</a></li>
+        <li><a href="/gameTime/find-game/mlb/{%now 'Ymd'%}">MLB</a></li>
+        <!-- <li class='sub-menu'><a href="#">HISTORY GAMES</a>
+           <ul class='submenu2'>
+              <li><a href="#">NFL</a></li>
+              <li><a href="#">NHL</a></li>
+              <li><a href="#">NBA</a></li>
+              <li><a href="#">MLB</a></li>
+           </ul>
+        </li> -->
+      </ul>
+     </li>
+     <li><a href="#">HISTORY GAMES<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="#">NFL</a></li> -->
+          <li><a href="{% url 'historyGames' 'nhl' %}">NHL</a></li>
+          <li><a href="{% url 'historyGames' 'nba' %}">NBA</a></li>
+          <li><a href="{% url 'historyGames' 'mlb' %}">MLB</a></li>
+        </ul>
+     </li>
+     <!-- <li><a href="#">News<strong></strong></a></li> -->
+     <!-- <li id="last-li"><a href="#">Contact<strong></strong></a></li -->
+     {% if user.is_authenticated %}
+      <li id="last-li"><a href="#"><i class="fa fa-user fa-lg"></i> {{user.first_name}}<strong></strong></a>
+        <ul class='submenu'>
+          <li><a href="{%url 'manage'%}">Manage</a></li>
+          <li><a href="{% url 'logout'%}">Log out</a></li>
+        </ul>
+      </li>
+     {% else %}
+      <li id="signup-li"><a data-toggle="modal" data-target="#register-modal">Sign up<strong></strong></a></li>
+        <li id="last-li"><a data-toggle="modal" data-target="#login-modal">Log in<strong></strong></a></li>
+      {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+{% for message in messages %}
+  <input id="message" type="hidden" value="{{message}}">
+{% endfor %}
+<div class="slider_wrapper">
+  <div class="" id="camera_wrap">
+    <div data-src="{%static 'gameTimeApp/images/slide1.jpg'%}">
+      <div class="caption fadeIn">
+        <div class="caption_bg">
+          <span class="slider_txt1">game time!</span>
+          <span class="slider_txt2">get your game going</span>
+        </div>
+      </div>
+    </div>
+
+    <div data-src="{%static 'gameTimeApp/images/slide2.jpg'%}">
+      <div class="caption fadeIn">
+        <div class="caption_bg">
+          <span class="slider_txt1">Follow the hype</span>
+          <span class="slider_txt2">get real time sports commentary <br>from community of game spectators</span>      
+        </div>
+      </div>
+    </div>
+
+    <div data-src="{%static 'gameTimeApp/images/slide3.jpg'%}">
+      <div class="caption fadeIn">
+        <div class="caption_bg">
+          <span class="slider_txt1">Stir the controversy</span>
+          <span class="slider_txt2">Question and Answering<br>for your most blazing inquisitions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="box-1">
+  <div class="container" style="padding: 0;">
+    <div class="row">
+      <div class="col-xs-3">
+        <div class="wrapper">
+          <span class="num_link">01</span>
+        </div>
+        <img src="{%static 'gameTimeApp/images/index_pic1.jpg'%}" class="img_rounded img1">
+        <div class="box">
+          <p class="marTop1 color2"><span class="color1 marBot1">We love sports</span><br>We offer real-time data of US's major sports leagues.</p>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="wrapper">
+          <span class="num_link">02</span>
+        </div>
+        <img src="{% static 'gameTimeApp/images/index_pic2.png' %}" alt="" class="img1 img_rounded">
+        <div class="box">
+          <p class="marTop1 color2"><span class="color1 marBot1">All about the game</span><br>Personalized game commentrary meets real-time statistics.</p>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="wrapper">
+          <span class="num_link">03</span>
+        </div>
+        <img src="{%static 'gameTimeApp/images/index_pic3.png'%}" alt="" class="img1 img_rounded">
+        <div class="box">
+          <p class="marTop1 color2"><span class="color1 marBot1">Sports brain storms</span><br>Have a question about the game? People know the answer.</p>
+        </div>
+      </div>
+
+      <div class="col-xs-3">
+        <div class="wrapper">
+          <span class="num_link">04</span>
+        </div>
+        <img src="{%static 'gameTimeApp/images/index_pic4.jpg'%}" alt="" class="img1 img_rounded">
+        <div class="box">
+          <p class="marTop1 color2"><span class="color1 marBot1">Reputation system</span><br>Build your reputation by offering high-quality information.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- <div class="container" style="padding:0;">
+
+  <div class="row">
+
+    <div class="col-xs-6">
+      <div class="hline2">
+        <h2>Hello there</h2>
+        <h3>Ut telloribus eget elemetum vel cu</h3>
+      </div>
+
+      <p class="padLeft1 lh26">Ut telloribus eget elemetum vel curleif end elit. Aean auctoet urnaliirpis nteerutrum ante lastibulumur lelmetus. Nulla fn nec ero ante ipsummis fauus qrci l et utrices posuere cubilipende sollicitudinitsed leo pharetr</p><br>
+      <a href="#" class="more_btn">Read more information</a>
+    </div>
+
+
+    <div class="col-xs-6">
+      <div class="hline2">
+        <h2>Latest events</h2>
+        <h3>vel curleif end elit. Aean auctoet urnali</h3>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6">
+          <ul class="listWithMarker">
+            <li><a href="#">Aean auctoet urnaliirpi nteer</a></li>
+            <li><a href="#">Nulla fn nec ero ante ipsums faus</a></li>
+            <li><a href="#">Naelit magnanrerit sietincidunt</a></li>
+            <li><a href="#">Diam eu massaque dorem intedum</a></li>
+          </ul>
+        </div>
+
+        <div class="col-xs-6">
+          <ul class="listWithMarker">
+            <li><a href="#">Naelit magnanrerit sietincidunt</a></li>
+            <li><a href="#">Diam eu massaque dorem intedu</a></li>
+            <li><a href="#">Honec eget tellus non erat lac</a></li>
+            <li><a href="#">Donec in velit vel ipsum</a></li>
+          </ul>
+        </div>
+
+      </div>
+      <a href="#" class="more_btn">more events</a>
+    </div>    
+  </div>
+</div> -->
+{% endblock %}
+{% block footer %}
+<footer>
+  <div class="footer_priv">
+
+    <div class="container" style="padding:0">
+      <div class="row">
+        <div class="col-xs-6">
+          <h1><a href="index.html"><img src="{% static 'gameTimeApp/images/logo_footer.png' %}" class="no_resize" width="150px;"></a></h1>
+          <p class="txt_priv">Game Time &bull; &copy; <span id="copyright-year"></span> &bull; <a href="index-5.html">Privacy Policy</a><br><!--{%FOOTER_LINK} --></p>
+        </div>
+
+        <!-- <div class="col-xs-3">
+          <ul class="list2">
+            <li><a href="#">google plus</a></li>
+            <li><a href="#">flickr</a></li>
+            <li><a href="#">Dribbble</a></li>
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">Skype</a></li>
+          </ul>
+        </div> -->
+
+        <div class="col-xs-3">
+          <ul class="list2">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contacts</a></li>
+          </ul>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+{% block scripts %}
+<script src="{%static 'gameTimeApp/js/jquery.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery-migrate-1.2.1.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.easing.1.3.js'%}"></script>
+<script src="{% static 'gameTimeApp/js/jquery.stickyalert.js' %}"></script>
+<script>
+  if ($("#message").length) {
+    var message = $("#message").val();
+    $('#alert-container').stickyalert({
+      barFontColor:'#8a6d3b',
+      barColor: '#fcf8e3',
+      barFontSize: '14px',
+        barText: message,
+    });
+  }
+</script>
+<script src="{%static 'gameTimeApp/js/scroll_to_top.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/script.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.equalheights.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/superfish.js'%}"></script>
+<!--[if (gt IE 9)|!(IE)]><!-->
+  <script src="{%static 'gameTimeApp/js/jquery.mobile.customized.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.mobilemenu.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/touchTouch.jquery.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/camera.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.tools.min.js'%}"></script>
+<script src="{% static 'gameTimeApp/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'gameTimeApp/js/modal-control.js' %}"></script>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    
+    jQuery('#camera_wrap').camera({
+        loader: false,
+        pagination: true,
+        thumbnails: false,
+        height: '41.666666%',
+        fx: 'simpleFade',
+        rows: '1',
+        slicedCols: '1',
+        slicedRows: '1',
+        caption: false
+      });
+
+   });
+
+   $(document).ready(function(){
+    // Initialize the gallery
+    $('.magnifier2').touchTouch();
+   });
+
+</script>
+{% endblock %}

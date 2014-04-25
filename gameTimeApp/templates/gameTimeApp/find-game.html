@@ -1,0 +1,120 @@
+<!-- start searching for games here -->
+{% extends "gameTimeApp/base-generic.html" %}
+{% load staticfiles %}
+{% block title %}
+<title>
+  Find your game.
+</title>
+{% endblock %}
+{% block navbar %}
+<nav>
+  <ul class="sf-menu header_menu">
+    <li id="first-li"><a href="{% url 'home' %}">Home<strong></strong></a></li>
+    <li class="current"><a href="#">Find A Game<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="/gameTime/find-game/nfl/{%now 'Ymd'%}">NFL</a></li> -->
+          <li><a href="/gameTime/find-game/nhl/{%now 'Ymd'%}">NHL</a></li>
+          <li><a href="/gameTime/find-game/nba/{%now 'Ymd'%}">NBA</a></li>
+          <li><a href="/gameTime/find-game/mlb/{%now 'Ymd'%}">MLB</a></li>
+          <!-- <li class='sub-menu'><a href="#">HISTORY GAMES</a>
+             <ul class='submenu2'>
+                <li><a href="#">NFL</a></li>
+                <li><a href="#">NHL</a></li>
+                <li><a href="#">NBA</a></li>
+                <li><a href="#">MLB</a></li>
+             </ul>
+          </li> -->
+        </ul>
+     </li>
+     <li><a href="#">HISTORY GAMES<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="#">NFL</a></li> -->
+          <li><a href="{% url 'historyGames' 'nhl' %}">NHL</a></li>
+          <li><a href="{% url 'historyGames' 'nba' %}">NBA</a></li>
+          <li><a href="{% url 'historyGames' 'mlb' %}">MLB</a></li>
+        </ul>
+     </li>
+     <!-- <li><a href="#">News<strong></strong></a></li> -->
+     <!-- <li id="last-li"><a href="#">Contact<strong></strong></a></li -->
+     {% if user.is_authenticated %}
+      <li id="last-li"><a href="#"><i class="fa fa-user fa-lg"></i> {{user.first_name}}<strong></strong></a>
+        <ul class='submenu'>
+          <li><a href="{% url 'manage' %}">Manage</a></li>
+          <li><a href="{% url 'logout'%}">Log out</a></li>
+        </ul>
+      </li>
+     {% else %}
+      <li id="signup-li"><a data-toggle="modal" data-target="#register-modal">Sign up<strong></strong></a></li>
+        <li id="last-li"><a data-toggle="modal" data-target="#login-modal">Log in<strong></strong></a></li>
+      {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+<input id="league-name" type="hidden" value={{league}}>
+<div class="box-2">
+  <div class="container">
+  <h2>Find the {{league}} game you want to follow:</h2>
+  <hr class="featurette-divider-mini">
+    <div class="col-xs-10 col-xs-offset-1" id="mapHolder"> 
+      <div id="map-canvas"></div>
+      {% for game in games %}
+      <div id="gameInfo">       
+        <div id="venueName">{{game.venue.name}}</div>
+        <div id="venueAddress">{{game.venue.address}}</div>
+        <div id="homeTeam">{{game.home_team.whole_name}}</div>
+        <div id="awayTeam">{{game.away_team.whole_name}}</div>
+        <div id="gameId">{{game.game_id}}</div>
+        <!-- <img id ="displayPhoto" src="{% static '/gameTimeApp/fence.jpg' %}"> -->
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="container" style="position:relative;">
+    <h2> Today's {{league}} schedule:</h2>
+    <hr class="featurette-divider-mini">
+    <div>
+      <table id="schedule" class="table table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <th style="border-left-width: 0;">Starting Time</th>
+            <th>Home Team</th>
+            <th>Away Team</th>
+            <th style="border-right-width: 0;">Followers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for game in games %}
+          <tr onclick="document.location = '{% url 'game-page' game.game_id 'commentary' %}'" style="cursor: pointer;" title="Follow the game">
+            <th>{{game.start_time|date:"G:i:s (e)"}}</th>
+            <th>{{game.home_team.whole_name}}</th>
+            <th>{{game.away_team.whole_name}}</th>
+            <th>1000</th>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+  var league = document.getElementById("league-name").value;
+</script>
+<script src="{%static 'gameTimeApp/js/jquery.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery-migrate-1.2.1.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/scroll_to_top.js'%}"></script>
+<script src="{% static 'gameTimeApp/js/bootstrap.min.js' %}"></script>
+<script src="{%static 'gameTimeApp/js/script.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/superfish.js'%}"></script>
+<!--[if (gt IE 9)|!(IE)]><!-->
+    <script src="{%static 'gameTimeApp/js/jquery.mobile.customized.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.mobilemenu.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/touchTouch.jquery.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.tools.min.js'%}"></script>
+<script type="text/javascript"src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwKNnpiMzidKnowwtypXnaahSuzABCX_E&sensor=false">
+    </script>
+<script src="{%static 'gameTimeApp/js/interactive.js'%}"></script>
+<script src="{% static 'gameTimeApp/js/modal-control.js' %}"></script>
+{% endblock %}

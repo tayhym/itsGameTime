@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generation started @ 2014-04-19 05:39:02 UTC -->
+<boxscore id="3a91a7ea-ab6c-4fe9-9826-c6fc2179ac6e" season_id="8f4e3a30-8444-11e3-808c-22000a904a71" season_year="2014" season_type="REG" status="inprogress" xmlns="http://feed.elasticstats.com/schema/mlb/boxscore-v5.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <outcome type="pitch" current_inning="10" current_inning_half="T">
+    <count strikes="1" balls="0" outs="1" inning="10" inning_half="T" half_over="false"/>
+    <hitter id="7c9c97fd-7a89-49e1-830b-0274a5c2209a" first_name="Paul" preferred_name="Paul" last_name="Goldschmidt" team_id="5c94ef3f-1a9c-41b3-8248-7aaafb3abf57" team_name="Diamondbacks" outcome_id="kF" ab_over="false"/>
+    <pitcher id="aa60eced-9905-4618-98d6-533e653eba0f" first_name="Brandon" preferred_name="Brandon" last_name="League" team_id="0fe84937-b518-4a58-b093-fafbeaec4620" team_name="Dodgers" pitch_type="SI" pitch_speed="93.0" zone="9"/>
+    <runners>
+      <runner id="e7b98206-956a-4409-9f22-64f2048a31ee" starting_base="1" ending_base="1" out="false" first_name="Gerardo" preferred_name="Gerardo" last_name="Parra">
+      </runner>
+    </runners>
+  </outcome>
+  <visitor id="25507be1-6a68-4267-bd82-e097d94b359b" name="Diamondbacks" abbr="ARI" probable_pitcher="d8326a8e-0f8a-49dc-b3a9-610ddfdc53b7" runs="2" hits="5" errors="0" starting_pitcher="d8326a8e-0f8a-49dc-b3a9-610ddfdc53b7">
+    <runs>
+      <event id="6c8f0217-8d9c-4690-a59e-bf09e25a04c5" hitter_id="f695700e-36bb-46be-aad6-92c68f73e61e" pitcher_id="ba554801-7322-487c-a998-74fd132712e8" inning="6" inning_half="T" type="pitch" hitter_outcome="aHR">
+        <run runner_id="f695700e-36bb-46be-aad6-92c68f73e61e" starting_base="0"/>
+      </event>
+      <event id="a515d92b-1c48-4b4e-9f97-6ae5482886ef" hitter_id="933a0bc9-26c0-478e-982c-01fd8ffe0614" pitcher_id="1acfaf50-d7a4-4997-b1ec-d4cc14ce938e" inning="9" inning_half="T" type="pitch" hitter_outcome="bB">
+        <run runner_id="5cba83cb-1f31-4076-842b-b5dc09c01101" starting_base="3"/>
+      </event>
+    </runs>
+  </visitor>
+  <home id="ef64da7f-cfaf-4300-87b0-9313386b977c" name="Dodgers" abbr="LA" probable_pitcher="ba554801-7322-487c-a998-74fd132712e8" runs="2" hits="3" errors="1" starting_pitcher="ba554801-7322-487c-a998-74fd132712e8">
+    <runs>
+      <event id="b8941a08-ece6-47cb-aa32-2b5eac72da37" hitter_id="9dec71ae-6e68-4e10-814d-a246366cff47" pitcher_id="d8326a8e-0f8a-49dc-b3a9-610ddfdc53b7" inning="7" inning_half="B" type="pitch" hitter_outcome="aHR">
+        <run runner_id="9dec71ae-6e68-4e10-814d-a246366cff47" starting_base="0"/>
+      </event>
+      <event id="6ba2825c-0919-40c4-b04f-2ab9a729c8c6" hitter_id="081677e0-4134-4f69-a4a4-05acf060ead0" pitcher_id="927c57ff-46e8-4c4c-a6b9-1b2ee47d11fb" inning="9" inning_half="B" type="pitch" hitter_outcome="aHR">
+        <run runner_id="081677e0-4134-4f69-a4a4-05acf060ead0" starting_base="0"/>
+      </event>
+    </runs>
+  </home>
+</boxscore>
+<!-- Generation ended @ 2014-04-19 05:39:02 UTC -->

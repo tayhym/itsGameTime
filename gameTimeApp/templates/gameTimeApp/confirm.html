@@ -1,0 +1,60 @@
+{% extends "gameTimeApp/base-generic.html" %}
+{% load staticfiles %}
+{% load tags %}
+{% block title %}
+<title>
+  Confirmation
+</title>
+{% endblock %}
+{% block navbar %}
+<nav>
+  <ul class="sf-menu header_menu">
+    <li id="first-li"><a href="{%url 'home'%}">Home<strong></strong></a></li>
+    <li><a href="#"><span></span>Find A Game<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="/gameTime/find-game/nfl/{%now 'Ymd'%}">NFL</a></li> -->
+          <li><a href="/gameTime/find-game/nhl/{%now 'Ymd'%}">NHL</a></li>
+          <li><a href="/gameTime/find-game/nba/{%now 'Ymd'%}">NBA</a></li>
+          <li><a href="/gameTime/find-game/mlb/{%now 'Ymd'%}">MLB</a></li>
+        </ul>
+     </li>
+     <li><a href="#"><span></span>HISTORY GAMES<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="#">NFL</a></li> -->
+          <li><a href="{% url 'historyGames' 'nhl' %}">NHL</a></li>
+          <li><a href="{% url 'historyGames' 'nba' %}">NBA</a></li>
+          <li><a href="{% url 'historyGames' 'mlb' %}">MLB</a></li>
+        </ul>
+     </li>
+     <li><a data-toggle="modal" data-target="#register-modal">Sign up<strong></strong></a></li>
+     {% if user.is_authenticated %}
+      <li id="last-li"><a href="{% url 'logout'%}">Log out<strong></strong></a></li>
+     {% else %}
+        <li id="last-li"><a data-toggle="modal" data-target="#login-modal">Log in<strong></strong></a></li>
+      {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+<input id="league-name" type="hidden" value={{home_team.league}}>
+<input id="activeTab" type="hidden" value={{activeTab}}> <!-- to make the right tab active on display -->
+<input id="game-id" type="hidden" value={{game_id}}>
+<div class="box-2" style="padding-top: 150px;">
+    <h2 style="text-align: center;">{{message}}</h2>
+  </div>  
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script src="{%static 'gameTimeApp/js/jquery.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/bootstrap.min.js' %}"></script>
+<script src="{%static 'gameTimeApp/js/jquery-migrate-1.2.1.js'%}"></script>
+<!-- <script src="{%static 'gameTimeApp/js/script.js'%}"></script> -->
+<script src="{%static 'gameTimeApp/js/superfish.js'%}"></script>
+<!--[if (gt IE 9)|!(IE)]><!-->
+<script src="{%static 'gameTimeApp/js/jquery.mobile.customized.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.mobilemenu.js'%}"></script>
+<script src="{% static 'gameTimeApp/js/modal-control.js' %}"></script>
+<!-- <script src="{%static 'gameTimeApp/js/touchTouch.jquery.js'%}"></script> -->
+<!-- <script src="{%static 'gameTimeApp/js/jquery.tools.min.js'%}"></script> -->
+{% endblock %}

@@ -1,0 +1,123 @@
+<!-- registration page -->
+{% extends "gameTimeApp/base-generic.html" %}
+{% load staticfiles %}
+
+{% block navbar %}
+<nav>
+	<ul class="sf-menu header_menu">
+		<li id="first-li"><a href="{%url 'home'%}">Home<strong></strong></a></li>
+		<li class="current"><a href="#"><span></span>Find A Game<strong></strong></a>
+				<ul class='submenu'>
+					<!-- <li><a href="/gameTime/find-game/nfl/{%now 'Ymd'%}">NFL</a></li> -->
+					<li><a href="/gameTime/find-game/nhl/{%now 'Ymd'%}">NHL</a></li>
+					<li><a href="/gameTime/find-game/nba/{%now 'Ymd'%}">NBA</a></li>
+					<li><a href="/gameTime/find-game/mlb/{%now 'Ymd'%}">MLB</a></li>
+					<!-- <li class='sub-menu'><a href="#">HISTORY GAMES</a>
+						 <ul class='submenu2'>
+								<li><a href="#">NFL</a></li>
+								<li><a href="#">NHL</a></li>
+								<li><a href="#">NBA</a></li>
+								<li><a href="#">MLB</a></li>
+						 </ul>
+					</li> -->
+				</ul>
+		 </li>
+		 <li><a href="#"><span></span>HISTORY GAMES<strong></strong></a>
+				<ul class='submenu'>
+					<!-- <li><a href="#">NFL</a></li> -->
+					<li><a href="#">NHL</a></li>
+					<li><a href="#">NBA</a></li>
+					<li><a href="#">MLB</a></li>
+				</ul>
+		 </li>
+		 <li><a href="#">News<strong></strong></a></li>
+		 <li id="last-li"><a href="#">Contact<strong></strong></a></li>
+	</ul>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<div class="box-2">
+	<div class="container">
+	<h2> Register for an account </h2>
+	<hr class="featurette-divider-mini">
+		<!-- Display errors in form (as seeen in form validation) -->
+	{% for error in errors %}
+	<p class="text-danger"><strong>{{ error }}</strong></p>
+	{% endfor %}
+	<!-- Display status of registration to user  -->
+	{% if status %}
+	<p class="text-info">{{status}}</p>
+	<br>
+	{% endif %}	
+	<!-- form redirects to the action to process the info  -->
+	<form action="{% url 'register' %}" method="post" class="form-horizontal" >
+		<!-- collect info from user: name, email and password -->
+		<div class="form-group">
+			<label class="control-label col-sm-2" style="text-align:left"for="firstName"> First Name: 
+			</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="text" id="firstName" value="{{firstName}}" name="firstName"/>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-sm-2" style="text-align:left" for="lastName"> Last Name:
+			</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="text" id="lastName" value="{{lastName}}" name="lastName"/>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-sm-2" style="text-align:left" for="email"> Email:
+			</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="text" id="email" value="{{email}}" name="email"/>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="control-label col-sm-2" style="text-align:left" for="password1"> Password:
+			</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="password" id="password1" value="{{password1}}" name="password1"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-2" style="text-align:left" for="password2"> Password (Again):
+			</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="password" id="text" id="password2" value="{{password2}}" name="password2"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-default">Register
+			</button>
+			</div>	
+		</div>
+		{% csrf_token %}
+	</form>
+	</div>
+	
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{%static 'gameTimeApp/js/jquery.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery-migrate-1.2.1.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/script.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/superfish.js'%}"></script>
+<!--[if (gt IE 9)|!(IE)]><!-->
+		<script src="{%static 'gameTimeApp/js/jquery.mobile.customized.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.mobilemenu.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/touchTouch.jquery.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.tools.min.js'%}"></script>
+{% endblock %}
+
+
+

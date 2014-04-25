@@ -1,0 +1,556 @@
+<!-- place where users follow a game -->
+{% extends "gameTimeApp/base-generic.html" %}
+{% load staticfiles %}
+{% load tags %}
+{% block title %}
+<title>
+  {{away_team.whole_name}} vs {{home_team.whole_name}}
+</title>
+{% endblock %}
+{% block navbar %}
+<nav>
+  <ul class="sf-menu header_menu">
+    <li id="first-li"><a href="{% url 'home' %}">Home<strong></strong></a></li>
+    <li class="current"><a href="#">Find A Game<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="/gameTime/find-game/nfl/{%now 'Ymd'%}">NFL</a></li> -->
+          <li><a href="/gameTime/find-game/nhl/{%now 'Ymd'%}">NHL</a></li>
+          <li><a href="/gameTime/find-game/nba/{%now 'Ymd'%}">NBA</a></li>
+          <li><a href="/gameTime/find-game/mlb/{%now 'Ymd'%}">MLB</a></li>
+          <!-- <li class='sub-menu'><a href="#">HISTORY GAMES</a>
+             <ul class='submenu2'>
+                <li><a href="#">NFL</a></li>
+                <li><a href="#">NHL</a></li>
+                <li><a href="#">NBA</a></li>
+                <li><a href="#">MLB</a></li>
+             </ul>
+          </li> -->
+        </ul>
+     </li>
+     <li><a href="#">HISTORY GAMES<strong></strong></a>
+        <ul class='submenu'>
+          <!-- <li><a href="#">NFL</a></li> -->
+          <li><a href="{% url 'historyGames' 'nhl' %}">NHL</a></li>
+          <li><a href="{% url 'historyGames' 'nba' %}">NBA</a></li>
+          <li><a href="{% url 'historyGames' 'mlb' %}">MLB</a></li>
+        </ul>
+     </li>
+     {% if user.is_authenticated %}
+      <li id="last-li"><a href="#"><i class="fa fa-user fa-lg"></i> {{user.first_name}}<strong></strong></a>
+        <ul class='submenu'>
+          <li><a href="{% url 'manage' %}">Manage</a></li>
+          <li><a href="{% url 'logout'%}">Log out</a></li>
+        </ul>
+      </li>
+     {% else %}
+      <li id="signup-li"><a data-toggle="modal" data-target="#register-modal">Sign up<strong></strong></a></li>
+        <li id="last-li"><a data-toggle="modal" data-target="#login-modal">Log in<strong></strong></a></li>
+     {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+{% block content %}
+<input id="league-name" type="hidden" value={{home_team.league}}>
+<input id="user-auth" type="hidden" value={{user.is_authenticated}}>
+<input id="activeTab" type="hidden" value={{activeTab}}> <!-- to make the right tab active on display -->
+<input id="game-id" type="hidden" value={{game_id}}>
+<div class="box-2">
+  <div class="container scoreboard">
+    <div class="col-xs-6 col-sm-4 team-header", style="float:left;">
+      <div class="away-team-city">{{away_team.market}}</div>
+      <div id="away-name" class="away-team-name">{{away_team.name}}</div>
+    </div>
+    <div class="col-xs-6 col-sm-4 score-table">
+      <table id="scores" class="table table-bordered">
+        <thead>
+          <tr><th id="game-status" colspan=2>Scheduled</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th id="away-score">00</th>
+            <th id="home-score">00</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-xs-6 col-sm-4 team-header", style="float:right;">
+      <div class="home-team-city">{{home_team.market}}</div>
+      <div id="home-name" class="home-team-name">{{home_team.name}}</div>
+    </div>
+
+  </div>
+  
+  <div class="container game-panel">
+    <ul class="nav nav-tabs nav-justified" id="tabs">
+      <li id="commentsHeader"> <a href="#commentary" data-toggle="tab">Commentary</a></li>
+      <li id="questionsHeader"> <a href="#Q-A" data-toggle="tab">Questions & Answers</a></li>
+      <li> <a href="#stats" data-toggle="tab">Game Statistics</a></li>
+    </ul>
+    
+    <!-- modified lynda.com base accordion structure, based on bootstrap 3 -->
+    <div class="tab-content">
+      <div class="tab-pane fade active in" id="commentary">
+        {% if blogErrorMsg %} 
+          <p class="text-errorMsg"> {{blogErrorMsg}} </p>
+        {% endif %}
+        <br>
+        <form enctype="multipart/form-data" action="{% url 'post-blog' game_id %}" class="form-horizontal" role="form" method="post">  
+          {{blog_form.text}}
+          <div style="display:inline-block">{{blog_form.picture}}</div>
+          <div style="display: inline-block;float:right;"><button class="btn btn-default">Post Comment</button></div>
+        {% csrf_token %}
+        </form>
+        
+        <div id="post-container">
+          {% for post in blog_posts %}
+          <div class="post-wrapper" id="postWrapper{{post.id}}" type="blogPost">
+            <div class="post-username"> {{post.user.first_name}}</div> 
+            <div class="post-org">@GameTime</div>
+            <div class="post-time">{{post.date|time_until_now}}</div>
+            <div class="post-reputation">Reputation: {{post.user.userinfo.reputation}}</div>
+            <div class="post-content"> 
+              {{post.text}} 
+              {% if post.picture %}
+              &nbsp;&nbsp;&nbsp;
+              <a href="#post-picture{{post.id}}" data-toggle="collapse" class="collapsed"><i class="fa fa-picture-o" rel="tooltip" title="view the picture"></i></a>
+              <div id="post-picture{{post.id}}" class="panel-collapse collapse" style="text-align: center">
+                <img src="{% url 'comment-photo' post.id %}" width="300px;">
+              </div>
+              {% endif %}
+            </div>
+            
+            <div class="post-actions">
+              <a href="#post{{post.id}}" data-toggle="collapse" class="collapsed"><i class="fa fa-comment" rel="tooltip" title="reply"></i></a>
+              <span class="action-number">{{post.response_set.all.count}}</span>
+              {% if user in post.likers.all %}
+                <a class="like" flag="1" pid="{{post.id}}" href="#" rel="tooltip" style="color:#8E2800"><i class="fa fa-heart"></i></a>
+              {% else %}
+                  <a class="like" flag="0" pid="{{post.id}}" href="#" rel="tooltip" style="color:#468966"><i class="fa fa-heart"></i></a>
+              {% endif %}
+              <span class="action-number">{{post.likers.all.count}}</span>
+            </div>
+            <br>
+            <div id="post{{post.id}}" class="panel-collapse collapse">
+              <div class="panel-body">
+                <form action="{% url 'add-reply' 'game' post.id %}"class="form-horizontal" role="form" method="post" style="margin-bottom: 80px;">
+                  {{reply_form.text}}
+                  <div style="display: inline-block;float:right;"><button class="btn btn-default">Add Response</button></div>
+                  {% csrf_token %}
+                </form>
+                {% for reply in post.sorted_response_set.all %}
+                  {% if forloop.counter|divisibleby:2 %}
+                  <div class="reply-wrapper" style="text-align: right;">
+                    <div class="bubble-right" >
+                      <i class="fa fa-quote-left"></i>&nbsp;&nbsp;&nbsp;{{reply.text}}&nbsp;&nbsp;&nbsp;<i class="fa fa-quote-right"></i>
+                    </div>
+                    <div style="display:inline-block">
+                      <div class="reply-username">{{reply.user.first_name}}</div>
+                      <div>{{reply.date|date:"M d, Y"}}</div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <div class="reply-wrapper">
+                    <div style="display:inline-block">
+                      <div class="reply-username">{{reply.user.first_name}}</div>
+                      <div>{{reply.date|date:"M d, Y"}}</div>
+                    </div>
+                    <div class="bubble-left">
+                      <i class="fa fa-quote-left"></i>&nbsp;&nbsp;&nbsp;{{reply.text}}&nbsp;&nbsp;&nbsp;<i class="fa fa-quote-right"></i>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="col-xs-12">
+            <br>
+          </div>
+        </div>
+      </div>  
+      <div class="tab-pane fade" id="Q-A">
+        {% if errorMsg %} 
+          <p class="text-errorMsg"> {{errorMsg}} </p>
+        {% endif %}
+        <br>
+        <form action="/gameTime/post-question/{{game_id}}" class="form-horizontal" role="form"
+        method="post">  
+            <!-- <textarea class = "form-control col-xs-8" rows="4" placeholder="Ask a Question..." name="text"></textarea> -->
+          {{question_form.text}}
+          <div style="display: inline-block;">
+            <div style="display: inline-block; vertical-align: middle;">Select your bounty:</div>
+            <div style="display: inline-block; vertical-align: middle; width: 60px;">
+              <select class="form-control col-xs-2 input-sm" name="bounty">
+              <option>0</option>
+              <option>1</option>
+              <option>5</option>
+              <option>10</option>
+              <option>20</option>
+              <option>100</option>
+            </select>
+            </div>
+          </div>
+          <div style="float:right;">
+            <button class="btn btn-default">Ask Question</button>
+          </div>
+        {% csrf_token %}
+        </form>
+
+        <div id="post-container">
+          {% for question in questions %}
+          <div class="post-wrapper">
+            <div class="post-username"> {{question.user.first_name}}</div> 
+            <div class="post-org">@GameTime</div>
+            <div class="post-time">{{question.date|time_until_now}}</div>
+            <div>
+              <span class="bounty-span"><i class="fa fa-usd"></i> Bounty: {{question.bounty}}</span>
+              {% if question.resolved %}
+              <span class="bounty-span" style="color:#468966;" id="question-status-{{question.id}}">Resolved</span>
+              {% else %}
+              <span class="bounty-span" style="color:#8E2800;" id="question-status-{{question.id}}">Not resolved</span>
+              {% endif %}
+            </div>
+            <div class="post-content"> {{question.text}} </div>
+            <div class="question-bounty">
+              <a href="#answer{{question.id}}" data-toggle="collapse" class="collapsed"><i class="fa fa-comments fa-lg" rel="tooltip" title="Answers"></i></a>
+              {{question.response_set.all.count}}
+            </div>
+            <div id="answer{{question.id}}" class="panel-collapse collapse">
+              <div class="panel-body">
+                <form enctype="multipart/form-data" action="{% url 'add-answer' 'game' question.id %}"class="form-horizontal" role="form" method="post" style="margin-bottom: 80px;">
+                  {{answer_form.text}}
+                  <div style="display:inline-block">{{answer_form.picture}}</div>
+                  <div style="display: inline-block;float:right;"><button class="btn btn-default">Add Answer</button></div>
+                  {% csrf_token %}
+                </form>
+                {% for answer in question.sorted_answer_set.all %}
+                  {% if forloop.counter|divisibleby:2 %}
+                    <div class="reply-wrapper" style="text-align: right;">
+                      <div class="bubble-right" >
+                        <i class="fa fa-quote-left"></i>&nbsp;&nbsp;&nbsp;{{answer.text}}&nbsp;&nbsp;&nbsp;<i class="fa fa-quote-right"></i>
+                        {% if answer.picture %}
+                        <a href="#answer-picture{{answer.id}}" data-toggle="collapse" class="collapsed" style="position:relative; top: 4px;">&nbsp;&nbsp;&nbsp;<i class="fa fa-picture-o" rel="tooltip" title="view picture"></i></a>
+                        <div id="answer-picture{{answer.id}}" class="panel-collapse collapse" style="text-align: center">
+                          <img src="{% url 'response-photo' answer.id %}" width="300px;">
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="user-profile">
+                        <div class="reply-username">{{answer.user.first_name}}</div>
+                        <div>{{answer.date|date:"M d, Y"}}</div>
+                      </div>
+                      <div class="votes" style="margin-left: 7px;">
+                        <div>
+                          <a class="up-vote" pid="{{answer.id}}" rel="tooltip:{{answer.id}}"><i class="fa fa-chevron-up fa-2x"></i></a>
+                        </div>
+                        <div class="vote-number">{{answer.votes}}</div>
+                        <div>
+                          <a class="dn-vote" pid="{{answer.id}}" rel="tooltip:{{answer.id}}"><i class="fa fa-chevron-down fa-2x"></i></a>
+                        </div>
+                      </div>
+                     
+                      <div class="bounty-select" style="margin-left:7px">
+                        <div>
+                          <a class="bounty-select" qid="{{answer.question.id}}"rel="tooltip:{{answer.id}}" data-toggle="tooltip" pid="{{answer.id}}" resolved="{{answer.best_answer}}"><i class="fa fa-check fa-2x"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="reply-wrapper">
+                      <div class="bounty-select" style="margin-right: 7px">
+                        <a rel="tooltip:{{answer.id}}" qid="{{answer.question.id}}" class="bounty-select" data-toggle="tooltip" pid="{{answer.id}}" resolved="{{answer.best_answer}}"><i class="fa fa-check fa-2x"></i></a>
+                      </div>
+                      <div class="votes" style="margin-right: 7px;">
+                        <div>
+                          <a class="up-vote" pid="{{answer.id}}" rel="tooltip:{{answer.id}}"><i class="fa fa-chevron-up fa-2x"></i></a>
+                        </div>
+                        <div class="vote-number">{{answer.votes}}</div>
+                        <div>
+                          <a class="dn-vote" pid="{{answer.id}}" rel="tooltip:{{answer.id}}"><i class="fa fa-chevron-down fa-2x"></i></a>
+                        </div>
+                      </div>
+                      <div class="user-profile">  
+                        <div class="reply-username">{{answer.user.first_name}}</div>
+                        <div>{{answer.date|date:"M d, Y"}}</div>
+                      </div>
+                      <div class="bubble-left">
+                        <i class="fa fa-quote-left"></i>&nbsp;&nbsp;&nbsp;{{answer.text}}&nbsp;&nbsp;&nbsp;<i class="fa fa-quote-right"></i>
+                        {% if answer.picture %}
+                        <a href="#answer-picture{{answer.id}}" data-toggle="collapse" class="collapsed" style="position:relative; top: 4px;">&nbsp;&nbsp;&nbsp;<i class="fa fa-picture-o" rel="tooltip" title="view picture"></i></a>
+                        <div id="answer-picture{{answer.id}}" class="panel-collapse collapse" style="text-align: center">
+                          <img src="{% url 'response-photo' answer.id %}" width="300px;">
+                        </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="col-xs-12">
+          <br>
+        </div>
+        
+        <!-- end questions -->
+      </div>
+      <div class="tab-pane fade" id="stats">
+        <div id="detailed-scores" class="table-responsive">
+          
+          <table class="table stat-container">
+            <thead>
+              <tr id="score-head-row"></tr>
+            </thead>
+            <tbody>
+              <tr id="away-score-row"></tr>
+              <tr id="home-score-row"></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- end of score table -->
+        {% if home_team.league == "nba" or home_team.league == "nhl" %}
+        <div class="stat-book">
+          <ul class="nav nav-tabs stats-tabs">
+            <li><span class="tab-header">Stats Book</span></li>
+            <li> <a href="#team-stats" data-toggle="tab">Team Stats</a></li>
+            <li class="dropdown"> 
+              <a href="#" data-toggle="dropdown">Player Stats  <span class="caret"></span></a>
+              <ul class="dropdown-menu stat-dropdown">
+                <li><a href="#away-player-stats" data-toggle="tab">{{away_team.name}}</a></li>
+                <li><a href="#home-player-stats" data-toggle="tab">{{home_team.name}}</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade" id="team-stats">
+              <table class="table stat-book-container stat-table">
+                <thead id="stat-thead">
+                  <tr>
+                    <th style="width:20%;"> </th>
+                    <th>{{away_team.name}}</th>
+                    <th>{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="stat-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of nba, nhl team stats panel -->
+            <div class="tab-pane fade" id="away-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="away-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{away_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="away-player-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tab-pane fade" id="home-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="home-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="home-player-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of nba, nhl player stats panel -->
+          </div>
+        </div>
+        {% endif %}
+
+        {% if home_team.league == "mlb" %}
+        <!-- start of hitting stat book -->
+        <div class="stat-book">
+          <ul class="nav nav-tabs stats-tabs mlb-tabs">
+            <li><span class="tab-header">Hitting</span></li>
+            <li> <a href="#hitting-team-stats" data-toggle="tab">Team Stats</a></li>
+            <li class="dropdown"> 
+              <a href="#" data-toggle="dropdown">Player Stats  <span class="caret"></span></a>
+              <ul class="dropdown-menu stat-dropdown">
+                <li><a href="#hitting-away-player-stats" data-toggle="tab">{{away_team.name}}</a></li>
+                <li><a href="#hitting-home-player-stats" data-toggle="tab">{{home_team.name}}</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade" id="hitting-team-stats">
+              <table class="table stat-book-container stat-table">
+                <thead id="hitting-stat-thead">
+                  <tr>
+                    <th style="width:25%;"> </th>
+                    <th>{{away_team.name}}</th>
+                    <th>{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="hitting-stat-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting team stats panel -->
+            <div class="tab-pane fade" id="hitting-away-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="hitting-away-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{away_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="hitting-away-player-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tab-pane fade" id="hitting-home-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="hitting-home-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="hitting-home-player-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting player stats panel -->
+          </div>
+        </div>
+        <!-- end of hitting stat book -->
+
+        <!-- start of pitching stat book -->
+        <div class="stat-book"> 
+          <ul class="nav nav-tabs stats-tabs mlb-tabs">
+            <li><span class="tab-header">Pitching</span></li>
+            <li> <a href="#pitching-team-stats" data-toggle="tab">Team Stats</a></li>
+            <li class="dropdown"> 
+              <a href="#" data-toggle="dropdown">Player Stats  <span class="caret"></span></a>
+              <ul class="dropdown-menu stat-dropdown">
+                <li><a href="#pitching-away-player-stats" data-toggle="tab">{{away_team.name}}</a></li>
+                <li><a href="#pitching-home-player-stats" data-toggle="tab">{{home_team.name}}</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade" id="pitching-team-stats">
+              <table class="table stat-book-container stat-table">
+                <thead id="pitching-stat-thead">
+                  <tr>
+                    <th style="width:25%;"> </th>
+                    <th>{{away_team.name}}</th>
+                    <th>{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="pitching-stat-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting team stats panel -->
+            <div class="tab-pane fade" id="pitching-away-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="pitching-away-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{away_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="pitching-away-player-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tab-pane fade" id="pitching-home-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="pitching-home-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="pitching-home-player-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting player stats panel -->
+          </div>
+        </div>
+        <!-- end of pitching stat book -->
+
+        <!-- start of fielding stat book -->
+        <div class="stat-book">
+          <ul class="nav nav-tabs stats-tabs mlb-tabs">
+            <li><span class="tab-header">Fielding</span></li>
+            <li> <a href="#fielding-team-stats" data-toggle="tab">Team Stats</a></li>
+            <li class="dropdown"> 
+              <a href="#" data-toggle="dropdown">Player Stats  <span class="caret"></span></a>
+              <ul class="dropdown-menu stat-dropdown">
+                <li><a href="#fielding-away-player-stats" data-toggle="tab">{{away_team.name}}</a></li>
+                <li><a href="#fielding-home-player-stats" data-toggle="tab">{{home_team.name}}</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade" id="fielding-team-stats">
+              <table class="table stat-book-container stat-table">
+                <thead id="fielding-stat-thead">
+                  <tr>
+                    <th style="width:25%;"> </th>
+                    <th>{{away_team.name}}</th>
+                    <th>{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="fielding-stat-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting team stats panel -->
+            <div class="tab-pane fade" id="fielding-away-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="fielding-away-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{away_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="fielding-away-player-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tab-pane fade" id="fielding-home-player-stats">
+              <table class="table stat-book-container stat-table">
+                <thead>
+                  <tr id="fielding-home-player-thead">
+                    <th style="width:25%;font-size: 18px;color:#fff;">{{home_team.name}}</th>
+                  </tr>
+                </thead>
+                <tbody id="fielding-home-player-tbody"></tbody>
+              </table>
+            </div>
+            <!-- end of hitting player stats panel -->
+          </div>
+        </div>
+        <!-- end of fielding stat book -->
+        {% endif %}
+        <!-- end of stat book -->
+      </div>
+      <div class="col-xs-12">
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script src="{%static 'gameTimeApp/js/jquery.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/bootstrap.min.js' %}"></script>
+<script src="{%static 'gameTimeApp/js/jquery-migrate-1.2.1.js'%}"></script>
+<script type="text/javascript">
+  var league = document.getElementById("league-name").value;
+  var gameID = document.getElementById("game-id").value;
+</script>
+
+
+<script src="{%static 'gameTimeApp/js/scroll_to_top.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/script.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/superfish.js'%}"></script>
+<!--[if (gt IE 9)|!(IE)]><!-->
+<script src="{%static 'gameTimeApp/js/jquery.mobile.customized.min.js'%}"></script>
+<script src="{%static 'gameTimeApp/js/jquery.mobilemenu.js'%}"></script>
+
+<script src="{%static 'gameTimeApp/js/game-stats.js' %}"></script>
+<script src="{% static 'gameTimeApp/js/modal-control.js' %}"></script>
+
+<script src="{%static 'gameTimeApp/js/bootstrap.file-input.js' %}"></script>
+<script src="{%static 'gameTimeApp/js/game-action.js' %}"></script>
+<script src="{%static 'gameTimeApp/js/posts-refresh.js' %}"></script>
+{% endblock %}
