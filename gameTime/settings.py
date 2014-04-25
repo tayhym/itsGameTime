@@ -95,16 +95,7 @@ LOGIN_URL = "/gameTime/"
 LOGIN_REDIRECT_URL = "/gameTime/"
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# future static file directories can be added here too
-STATICFILES_DIR = (
-    os.path.join(BASE_DIR, 'static'),
-)
 
 # using cmu server to communicate to users via email
 EMAIL_HOST = 'smtp.srv.cs.cmu.edu'
@@ -114,6 +105,18 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__)) + '/'
 MEDIA_ROOT = PROJECT_ROOT + 'media/'
 MEDIA_URL = '/media/'
 
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = PROJECT_ROOT + 'static'
+
+# future static file directories can be added here too
+STATICFILES_DIR = (
+    'http://www.google.com',
+    # os.path.join(BASE_DIR, 'static'),
+)
 
 
 # Parse database configuration from $DATABASE_URL
@@ -138,15 +141,16 @@ MEDIA_URL = '/media/'
 # # Allow all host headers
 # ALLOWED_HOSTS = ['*']
 
-# Static asset configuration
-import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# # Static asset configuration
+# import os
+# PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
+# STATIC_ROOT = 'staticfiles'
+# STATIC_URL = '/static/'
+
+# STATICFILES_DIRS = (
+#     os.path.join(PROJECT_PATH, 'static'),
+# )
 
 # easy maps environment variable
 EASY_MAPS_CENTER = (-41.3,32)
