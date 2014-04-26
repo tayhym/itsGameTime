@@ -1,0 +1,113 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    <title>GameTime - Home</title>
+    {% endblock %}
+    <meta name = "format-detection" content = "telephone=no" />
+    <link rel="shortcut icon" href="{%static 'gameTimeApp/images/favicon.ico' %}" type="image/x-icon">
+    <link href="{% static 'gameTimeApp/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{%static 'gameTimeApp/css/style.css'%}">
+    <link rel="stylesheet" href="{%static 'gameTimeApp/css/jquery.stickyalert.css'%}">
+    <!-- font-awesome font -->
+    <link rel="stylesheet" href="{%static 'gameTimeApp/fonts/font-awesome.css'%}" type="text/css" media="screen">
+  
+    <!-- ubuntu font -->
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href="{% static 'gameTimeApp/css/datepicker.css' %}" type="text/css" rel="stylesheet">
+    <!-- <link href="{% static 'gameTimeApp/css/datepicker3.css' %}" type="text/css" rel="stylesheet"> -->
+  </head>
+<body>
+<div id="back-top"><i class="fa fa-arrow-up"></i></div>
+<div class="main">
+  <div class="div-content">
+    <!-- login modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="login-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="position:relative; top:-10px;">&#10006;</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-form">
+              <h7>Welcome to GameTime!</h7>
+              <br>
+              <h8>Please log in to get the real game excitement.</h8>
+              <hr style="margin-top: 10px;">
+              <form method="post" action="{%url 'login'%}" id="login-form" role="form">
+              {% csrf_token %}
+                <div class="message"></div>
+                      <input type="text" class="form-control modal-input" placeholder="Email address" name="usrname" autofocus required>
+                      <input type="password" class="form-control modal-input" placeholder="Password" name="pwd" required>
+                      <!-- <div class="errors"></div> -->
+                      <div class="actions" style="text-align: center">
+                  <button class="btn btn-default" type="submit" style="width:100%;">Log in</button>
+                      </div>
+                      <div style="color:#468966;width:100%">Don't have an account? <a data-toggle="modal" data-target="#register-modal" style="color:#8E2800; font-weight: bold;">Create one</a>.</div>
+                    </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of login modal -->
+
+    <!-- registeration modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="register-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" style="position:relative; top:-10px;">&#10006;</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-form">
+              <h7>It's GameTime!</h7>
+              <br>
+              <h8>Please fill out the form to complete your registration.</h8>
+              <hr style="margin-top: 10px;">
+              <form id="register-form" method="post" action="{%url 'register'%}" role="form">
+              {% csrf_token %}
+              <div class="message"></div>
+                      <table style="width:100%">
+                {% for field in register_form.visible_fields %}
+                <tr><td>{{field}}</td></tr>
+                {% endfor %}
+                </table>
+                      <div class="actions" style="text-align: center">
+                  <button class="btn btn-default" type="submit" style="width:100%;">Sign up</button>
+                      </div>
+                      <div style="color:#468966;width:100%">Already a member? Please <a data-toggle="modal" data-target="#login-modal" style="color:#8E2800; font-weight: bold;">Log in</a>.</div>
+                    </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of registration modal -->
+    <header>
+      <div id="alert-container" style="position:absolute; top:-1px;"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1><a href="{%url 'home'%}"><img src="{%static 'gameTimeApp/images/logo-new.jpg'%}" alt="GameTime!" width="229px"></a></h1>
+            {% block navbar %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
+    </header>
+    {% block content %}
+    {% endblock %}
+    {% block footer%}
+    {% endblock %}
+  </div>
+</div>
+</body>
+{% block scripts %}
+{% endblock %}
+</html>

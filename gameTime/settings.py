@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'gameTimeApp',
     # 'south',
+    'gunicorn',
+    'storages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -55,20 +57,7 @@ WSGI_APPLICATION = 'gameTime.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-
-# (commented out 25/4/14) - heroku does settings
-# DATABASES = {                 
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'itsgametimedb',
-#         'USER': 'xiaohua',
-#         'PASSWORD': 'onefish',
-#         'HOST': 'localhost',
-#         "PORT": "5432",
-#     }
-# }
 # instead,only need the engine name, as heroku takes care of the rest
 DATABASES = {
     "default": {
@@ -101,56 +90,6 @@ LOGIN_REDIRECT_URL = "/gameTime/"
 EMAIL_HOST = 'smtp.srv.cs.cmu.edu'
 EMAIL_USE_TLS = False
 
-PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__)) + '/'
-MEDIA_ROOT = PROJECT_ROOT + 'media/'
-MEDIA_URL = '/media/'
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-
-STATIC_URL = '/static/'
-STATIC_ROOT = PROJECT_ROOT + 'static'
-
-# future static file directories can be added here too
-STATICFILES_DIR = (
-    'http://www.google.com',
-    # os.path.join(BASE_DIR, 'static'),
-)
-
-
-# Parse database configuration from $DATABASE_URL
-# import dj_database_url
-
-# DATABASES = {
-#   'default': {
-#     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     'NAME': 'df4u4l7pc675ad',
-#     'HOST': 'ec2-54-221-243-6.compute-1.amazonaws.com',
-#     'PORT': 5432,
-#     'USER': 'lsayyyoufybdsq',
-#     'PASSWORD': 'nVoXla4N4g6ks9c4H9HpbQZEZl'
-#   }
-# }
-# # DATABASES['default'] =  dj_database_url.config()
-
-
-# # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# # Allow all host headers
-# ALLOWED_HOSTS = ['*']
-
-
-# # Static asset configuration
-# import os
-# PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
-# STATIC_ROOT = 'staticfiles'
-# STATIC_URL = '/static/'
-
-# STATICFILES_DIRS = (
-#     os.path.join(PROJECT_PATH, 'static'),
-# )
 
 # easy maps environment variable
 EASY_MAPS_CENTER = (-41.3,32)
@@ -163,21 +102,86 @@ ALLOWED_HOSTS = ['*']
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
 
-DATABASES = { 'default' : dj_database_url.config()}
+# DATABASES = { 'default' : dj_database_url.config()}  ### uncomment after debugging
+DATABASES['default'] =  dj_database_url.config(default='postgres://cjumxevfhbfvjh:OXc1dwH2S-CH-YgSeB-NcaDqeD@ec2-23-23-80-55.compute-1.amazonaws.com:5432/derb509fpc8ebu')
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # try to load local_settings.py if it exists
-try: 
-    from local_settings import *
-except Exception as e:
-    print e
-    pass
+# try: 
+#     from local_settings import *
+# except Exception as e:
+#     print e
+#     pass
 
 print DEBUG
 
+################### static files ############################
 
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+MEDIA_ROOT = ''
+MEDIA_URL = ''
+STATIC_ROOT = ''
+STATIC_URL = 'https://s3.amazonaws.com/gametimebucket/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.messages.context_processors.messages',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.static',
+)
 
+# Additional locations of static files
+STATICFILES_DIRS = (
+        os.path.join(SITE_ROOT, 'static'),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+SECRET_KEY = 'NK0KGtsF8FFlJbopDe2IU9Cjxxs1ZEXjQ6hoxu1z'
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates')
+    
+)
+
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+AWS_ACCESS_KEY_ID = 'AKIAJOULJWFIJFJ4533A'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'gametimebucket'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
 

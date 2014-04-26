@@ -1,0 +1,31 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>test</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{% static 'gameTimeApp/css/bootstrap.min.css' %}" rel="stylesheet">
+	<link href="{% static 'gameTimeApp/css/datepicker.css' %}" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" href="{%static 'gameTimeApp/fonts/font-awesome.css'%}" type="text/css" media="screen">
+</head>
+<body>
+	<h1>test</h1>
+	<div class="form-group row">
+			<div class="col-xs-8">
+				<label for="startDate" class="control-label">Start Date</label>
+				<div class="input-group date" id="dp1" data-date="22-04-2014" data-date-format="mm-dd-yyyy">
+					<input class="form-control" type="text" readonly="" value="12-02-2012">
+      				<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+				</div>
+			</div>
+		</div>
+</body>
+	<script src="{%static 'gameTimeApp/js/jquery.min.js'%}"></script>
+	<script src="{%static 'gameTimeApp/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gameTimeApp/js/bootstrap-datepicker.js' %}"></script>
+	<script>
+	 $(".input-group.date").datepicker({ autoclose: true, todayHighlight: true });
+	</script>
+</html>

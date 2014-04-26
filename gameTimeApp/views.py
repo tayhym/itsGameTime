@@ -24,7 +24,7 @@ import sys
 import urllib2
 import datetime
 import time
-from xml.etree.ElementTree import ElementTree as ET
+from xml.etree.ElementTree as ET
 import random
 
 key_dict = {'nba':'y6ytb65x4aa65anucqefq2up', 'nhl':'vrnt63n7zg54symwn3m7tw4s', 'nfl':'yt477s5drjxn2eb6xumnu237', 'mlb':'z883vkekaeb48rhzkhr2bvsh'}
